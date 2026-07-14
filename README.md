@@ -35,18 +35,23 @@ Voice-Based Concept Understanding Analyser (VBCUA) is an advanced web diagnostic
 ## ⚙️ Project Architecture
 
 ```
-├── app.py                     # FastAPI application entrypoint & static routing
-├── reference_concepts.json     # Predefined subject concepts database
-├── requirements.txt           # Python backend dependencies
-├── utils/                     # Backend processing modules
-│   ├── ai_feedback.py         # Gemini/OpenAI API & offline feedback rule engines
-│   ├── audio_processor.py     # Librosa DSP audio features & noise suppression
-│   ├── nlp_analyzer.py        # NLTK tokenization & VADER sentiment analysis
-│   ├── pdf_generator.py       # ReportLab PDF compile-and-layout engine
-│   ├── scoring_engine.py      # Scorecard weights calculation
-│   ├── semantic_analyzer.py   # Sentence-Transformers cosine similarity
-│   ├── transcriber.py         # Whisper Local & OpenAI transcription
-│   └── visualizer.py          # Matplotlib chart generations
+├── backend/                   # FastAPI Backend
+│   ├── app.py                 # FastAPI application entrypoint & static routing
+│   ├── reference_concepts.json # Predefined subject concepts database
+│   ├── requirements.txt       # Python backend dependencies
+│   ├── scripts/               # Migration scripts
+│   └── utils/                 # Backend processing modules
+│       ├── ai_feedback.py     # Gemini/OpenAI API & offline feedback rule engines
+│       ├── audio_processor.py # Librosa DSP audio features & noise suppression
+│       ├── auth.py            # User authentication helpers
+│       ├── db.py              # MongoDB & GridFS handlers
+│       ├── mail.py            # SMTP OTP mail helper
+│       ├── nlp_analyzer.py    # NLTK tokenization & VADER sentiment analysis
+│       ├── pdf_generator.py   # ReportLab PDF compile-and-layout engine
+│       ├── scoring_engine.py  # Scorecard weights calculation
+│       ├── semantic_analyzer.py # Sentence-Transformers cosine similarity
+│       ├── transcriber.py     # Whisper Local & OpenAI transcription
+│       └── visualizer.py      # Matplotlib chart generations
 ├── frontend/                  # React SPA (Vite + CSS + Lucide Icons)
 │   ├── src/
 │   │   ├── components/        # View dashboards, navbar, and voice recorders
