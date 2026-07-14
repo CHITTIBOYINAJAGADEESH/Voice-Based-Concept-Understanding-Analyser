@@ -13,3 +13,6 @@ numpy
 pandas
 torch
 transformers
+pymongo
+pyjwt
+bcrypt

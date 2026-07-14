@@ -49,7 +49,7 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.lineWidth = 2;
-    ctx.strokeStyle = theme === 'dark' ? '#334155' : '#cbd5e1';
+    ctx.strokeStyle = theme === 'dark' ? '#1e293b' : '#cbd5e1';
     ctx.beginPath();
     ctx.moveTo(0, canvas.height / 2);
     ctx.lineTo(canvas.width, canvas.height / 2);
@@ -109,9 +109,6 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
       const processor = audioContext.createScriptProcessor(4096, 1, 1);
       processorNodeRef.current = processor;
       processor.onaudioprocess = (e) => {
-        if (isPaused) return; // Wait, isPaused value inside closure is from definition time, let's use a ref or check state.
-        // Actually, we can read the ref value to be safe, but we'll stop the timer too
-        // Let's use a ref for paused state inside onaudioprocess
         if (isPausedRef.current) return;
         
         const inputData = e.inputBuffer.getChannelData(0);
@@ -124,7 +121,7 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
       setIsRecording(true);
       setIsPaused(false);
       isPausedRef.current = false;
-      setStatus('Recording...');
+      setStatus('🎙️ Live Recording Active...');
       startTimer();
       visualize();
     } catch (err) {
@@ -137,14 +134,14 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
     if (isPaused) {
       setIsPaused(false);
       isPausedRef.current = false;
-      setStatus('Recording...');
+      setStatus('🎙️ Live Recording Active...');
       timerIntervalRef.current = setInterval(() => {
         setSeconds(prev => prev + 1);
       }, 1000);
     } else {
       setIsPaused(true);
       isPausedRef.current = true;
-      setStatus('Recording paused');
+      setStatus('⏸️ Recording paused');
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     }
   };
@@ -153,7 +150,7 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
     setIsRecording(false);
     setIsPaused(false);
     isPausedRef.current = false;
-    setStatus('Processing audio...');
+    setStatus('⚡ Compiling speech signal...');
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
 
@@ -176,7 +173,7 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
 
       const url = URL.createObjectURL(wavBlob);
       setAudioUrl(url);
-      setStatus('✅ Recording compiled!');
+      setStatus('✨ Speech recording compiled successfully!');
     }, 100);
   };
 
@@ -198,7 +195,7 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
 
   const submitAudio = () => {
     if (savedWavBlobRef.current) {
-      setStatus('📤 Sending to assessment pipeline...');
+      setStatus('📤 Sending speech signal to assessment pipeline...');
       onAudioSubmit(savedWavBlobRef.current, seconds);
     }
   };
@@ -226,7 +223,13 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.lineWidth = 3;
-      ctx.strokeStyle = '#06b6d4'; // Cyan wave
+      
+      // Beautiful linear gradient for waves
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      grad.addColorStop(0, '#14b8a6');
+      grad.addColorStop(0.5, '#6366f1');
+      grad.addColorStop(1, '#d946ef');
+      ctx.strokeStyle = grad;
 
       ctx.beginPath();
       const sliceWidth = canvas.width * 1.0 / bufferLength;
@@ -245,8 +248,8 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
       }
 
       ctx.lineTo(canvas.width, canvas.height / 2);
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = '#7c3aed'; // Purple glow
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = 'rgba(99, 102, 241, 0.4)';
       ctx.stroke();
       ctx.shadowBlur = 0; // reset
     };
@@ -323,7 +326,6 @@ export default function VoiceRecorder({ onAudioSubmit, theme }) {
     }
   };
 
-  // Format time
   const formatTime = (secs) => {
     const mins = String(Math.floor(secs / 60)).padStart(2, '0');
     const rSecs = String(secs % 60).padStart(2, '0');

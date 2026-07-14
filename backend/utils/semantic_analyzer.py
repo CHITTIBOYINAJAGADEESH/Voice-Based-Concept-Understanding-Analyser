@@ -51,19 +51,23 @@ def analyze_concept_understanding(transcript, reference_data):
     reference_text = reference_data.get("reference_explanation", "")
     sub_concepts = reference_data.get("sub_concepts", [])
     
-    # 1. Compute Overall Semantic Similarity
-    overall_sim = calculate_cosine_similarity(transcript, reference_text)
-    # Normalize cosine similarity (usually ranges from 0 to 1, convert to 0-100 scale)
-    # Cosine similarity for related items is usually above 0.3, scale it to map 0.3-0.9 to 0-100.
+    model = get_sbert_model()
+    
+    # 1. Compute Overall Semantic Similarity using cached embeddings if available
+    ref_emb = reference_data.get("explanation_embedding")
+    if ref_emb is None:
+        ref_emb = model.encode(reference_text, convert_to_tensor=True)
+        
+    trans_emb = model.encode(transcript, convert_to_tensor=True)
+    overall_sim = float(util.cos_sim(trans_emb, ref_emb).item())
+    
+    # Normalize cosine similarity
     semantic_score = max(0.0, min(100.0, (overall_sim - 0.2) / 0.7 * 100.0))
     if overall_sim > 0.9:
         semantic_score = 100.0
 
     # 2. Sub-concept Coverage Analysis
     # Split transcript into sentences
-    model = get_sbert_model()
-    
-    # Basic sentence splitter
     sentences = [s.strip() for s in transcript.replace("?", ".").replace("!", ".").split(".") if s.strip()]
     
     covered_concepts = []
@@ -71,14 +75,18 @@ def analyze_concept_understanding(transcript, reference_data):
     concept_alignments = []
     
     if len(sentences) > 0 and len(sub_concepts) > 0:
-        # Encode all sentences and sub-concepts
+        # Encode all sentences at once
         sentence_embeddings = model.encode(sentences, convert_to_tensor=True)
-        sub_concept_embeddings = model.encode(sub_concepts, convert_to_tensor=True)
+        
+        # Get cached sub-concepts embeddings if available
+        sub_concept_embs = reference_data.get("sub_concepts_embeddings")
+        if sub_concept_embs is None:
+            sub_concept_embs = model.encode(sub_concepts, convert_to_tensor=True)
         
         # Calculate pairwise similarity matrix [num_sub_concepts, num_sentences]
-        sim_matrix = util.cos_sim(sub_concept_embeddings, sentence_embeddings)
+        sim_matrix = util.cos_sim(sub_concept_embs, sentence_embeddings)
         
-        # Threshold for marking a concept as covered (0.50 is a reasonable SBERT similarity threshold)
+        # Threshold for marking a concept as covered
         coverage_threshold = 0.50
         
         for i, sub_concept in enumerate(sub_concepts):
@@ -95,26 +103,21 @@ def analyze_concept_understanding(transcript, reference_data):
             
             if max_sim_val >= coverage_threshold:
                 covered_concepts.append(sub_concept)
-              
             else:
                 missing_concepts.append(sub_concept)
-    else:
-        # Fallback if no sentences or sub-concepts
-        missing_concepts = list(sub_concepts)
-
-    # 3. Identify Factual Deviations / Out of Scope sentences
-    # Sentences in the transcript that have extremely low similarity with ALL parts of reference material
-    incorrect_statements = []
-    if len(sentences) > 0 and len(sub_concepts) > 0:
+                
+        # 3. Vectorized identification of Factual Deviations
+        # Compare all sentence embeddings with the reference explanation embedding at once
+        ref_sims = util.cos_sim(sentence_embeddings, ref_emb)
+        if len(ref_sims.shape) > 1:
+            ref_sims = ref_sims.squeeze(-1)
+            
+        incorrect_statements = []
         for idx, sentence in enumerate(sentences):
-            # Check maximum similarity of this sentence against the reference text and all sub-concepts
-            ref_embeddings = model.encode(reference_text, convert_to_tensor=True)
-            sent_emb = sentence_embeddings[idx]
-            
-            ref_sim = float(util.cos_sim(sent_emb, ref_embeddings).item())
+            ref_sim = float(ref_sims[idx].item()) if len(ref_sims.shape) > 0 else float(ref_sims.item())
             max_sub_sim = float(torch.max(sim_matrix[:, idx]).item())
-            
             best_sim = max(ref_sim, max_sub_sim)
+            
             # If the sentence has very low relevance (e.g. < 0.32), it is flagged
             if best_sim < 0.32 and len(sentence.split()) > 4:
                 incorrect_statements.append({
@@ -122,6 +125,10 @@ def analyze_concept_understanding(transcript, reference_data):
                     "relevance_score": best_sim,
                     "reason": "Low relevance to the selected topic explanation (factual deviation or off-topic explanation)"
                 })
+    else:
+        # Fallback if no sentences or sub-concepts
+        missing_concepts = list(sub_concepts)
+        incorrect_statements = []
 
     return {
         "semantic_score": float(semantic_score),

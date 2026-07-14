@@ -4,7 +4,7 @@ import google.generativeai as genai
 import openai
 
 # Default API Keys provided by the user (leave blank for local-only)
-DEFAULT_GEMINI_KEY = ""
+DEFAULT_GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
 DEFAULT_OPENAI_KEY = ""
 
 def generate_local_feedback(topic_name, transcript, scorecard, semantic_results, audio_results, nlp_results):

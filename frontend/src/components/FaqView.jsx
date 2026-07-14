@@ -23,7 +23,7 @@ export default function FaqView() {
     },
     {
       q: "Can I use my own API keys?",
-      a: "Yes! You can configure your own Gemini API Key or OpenAI API Key in the settings panel (located at the top-right or configuration bar). The app will immediately use these models to generate customized, high-quality coaching reviews."
+      a: "Yes! You can configure your own Gemini API Key or OpenAI API Key in the settings panel (located at the top configuration bar). The app will immediately use these models to generate customized, high-quality coaching reviews."
     }
   ];
 
@@ -32,12 +32,12 @@ export default function FaqView() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: '800px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+    <div className="container" style={{ maxWidth: '840px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.75rem' }}>
         <HelpCircle size={24} style={{ color: 'var(--accent)' }} />
-        <h2 style={{ fontSize: '1.75rem', margin: 0 }}>Frequently Asked Questions</h2>
+        <h2 style={{ fontSize: '1.75rem', margin: 0, fontWeight: '800' }}>Frequently Asked Questions</h2>
       </div>
-      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>
+      <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', marginBottom: '2.5rem', lineHeight: '1.5' }}>
         Learn more about the scoring mechanisms, local models, and configurations of the Voice-Based Concept Understanding Analyser.
       </p>
 
@@ -45,16 +45,29 @@ export default function FaqView() {
         {faqs.map((faq, index) => {
           const isOpen = activeIndex === index;
           return (
-            <div key={index} className="faq-item">
+            <div key={index} className="faq-item" style={{ 
+              borderColor: isOpen ? 'var(--border-card-hover)' : 'var(--border-card)',
+              boxShadow: isOpen ? '0 8px 30px -10px var(--shadow-card), 0 0 16px -4px var(--glow-color)' : 'none',
+              transform: isOpen ? 'translateY(-1px)' : 'none'
+            }}>
               <button 
                 className="faq-trigger" 
                 onClick={() => toggleFaq(index)}
+                style={{
+                  color: isOpen ? 'var(--primary)' : 'var(--text-main)',
+                  padding: '1.25rem 1.5rem',
+                }}
               >
-                <span>{faq.q}</span>
-                {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                <span style={{ fontWeight: '700' }}>{faq.q}</span>
+                {isOpen ? <ChevronUp size={18} style={{ color: 'var(--primary)' }} /> : <ChevronDown size={18} />}
               </button>
               {isOpen && (
-                <div className="faq-panel">
+                <div className="faq-panel" style={{
+                  borderTop: '1px solid var(--border-card)',
+                  paddingTop: '1.25rem',
+                  marginTop: '0px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.005)'
+                }}>
                   {faq.a}
                 </div>
               )}

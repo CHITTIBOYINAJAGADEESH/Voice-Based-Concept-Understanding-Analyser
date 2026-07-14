@@ -10,14 +10,23 @@ def load_and_preprocess_audio(audio_path, target_sr=16000):
     Handles noise reduction by basic spectral subtraction and normalizes volume.
     """
     try:
-        y, sr = librosa.load(audio_path, sr=target_sr)
-    except Exception as e:
-        # Fallback using soundfile if librosa fail
+        # Fast-path using soundfile to read natively and avoid slow librosa loading
         data, file_sr = sf.read(audio_path)
         if len(data.shape) > 1:
             data = np.mean(data, axis=1) # convert to mono
-        y = librosa.resample(data, orig_sr=file_sr, target_sr=target_sr)
+        
+        # Only resample if sample rate doesn't match target
+        if file_sr == target_sr:
+            y = data
+        else:
+            y = librosa.resample(data, orig_sr=file_sr, target_sr=target_sr)
         sr = target_sr
+    except Exception as e:
+        # Fallback to librosa if soundfile fails
+        try:
+            y, sr = librosa.load(audio_path, sr=target_sr)
+        except Exception as e2:
+            return np.array([]), target_sr
         
     if len(y) == 0:
         return y, sr
@@ -112,13 +121,26 @@ def analyze_speech_signals(y, sr, transcript=""):
     else:
         speaking_speed_wpm = 0
 
-    # 4. Pitch Contour (YIN)
-    # Pitch bounds for speech (50Hz to 400Hz)
+    # 4. Pitch Contour (YIN) - Optimized using downsampled audio to 4000Hz
+    # Pitch bounds for speech (50Hz to 400Hz).
+    # Since peak frequency of speech is < 400Hz, 4000Hz sampling rate is more than enough.
     try:
-        f0 = librosa.yin(y=y, sr=sr, fmin=50, fmax=400, hop_length=hop_length)
+        target_pitch_sr = 4000
+        # Downsample factor is sr / target_pitch_sr = 4
+        # Scale the hop_length to keep times aligned: 512 / 4 = 128
+        y_down = librosa.resample(y, orig_sr=sr, target_sr=target_pitch_sr)
+        f0 = librosa.yin(y=y_down, sr=target_pitch_sr, fmin=50, fmax=400, hop_length=128)
+        
+        # Ensure length matches rms contour length (which uses hop_length=512 at 16000Hz)
+        if len(f0) > len(rms):
+            f0 = f0[:len(rms)]
+        elif len(f0) < len(rms):
+            f0 = np.pad(f0, (0, len(rms) - len(f0)))
+            
         # Zero out pitch in silent frames
         f0[is_silent] = 0.0
-    except Exception:
+    except Exception as e:
+        print(f"Optimized YIN pitch detection failed: {e}. Falling back to zero contour.")
         f0 = np.zeros_like(rms)
 
     valid_pitches = f0[f0 > 0]

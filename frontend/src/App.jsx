@@ -2,16 +2,29 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HomeView from './components/HomeView';
 import DashboardView from './components/DashboardView';
-import HistoryView from './components/HistoryView';
+import AuthView from './components/AuthView';
+import ProfileDashboardView from './components/ProfileDashboardView';
 import FaqView from './components/FaqView';
 import AboutView from './components/AboutView';
-import SupportView from './components/SupportView';
 import { Settings, Key, Sliders, ChevronDown, ChevronUp } from 'lucide-react';
 import './App.css';
 
 const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:8000' : '';
 
 export default function App() {
+  const [token, setToken] = useState(() => localStorage.getItem('vbcua_token') || null);
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('vbcua_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
+
   const [page, setPage] = useState('home');
   const [theme, setTheme] = useState(() => localStorage.getItem('vbcua_theme') || 'dark');
   const [concepts, setConcepts] = useState([]);
@@ -23,7 +36,6 @@ export default function App() {
   // Assessment execution state
   const [results, setResults] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [history, setHistory] = useState([]);
 
   // Collapsible configuration panel
   const [showSettings, setShowSettings] = useState(false);
@@ -37,19 +49,12 @@ export default function App() {
     };
   });
 
-  // Fetch predefined concepts from backend
+  // Fetch predefined concepts from backend when token is present
   useEffect(() => {
-    fetchConcepts();
-    // Load historical records from localStorage
-    const savedHistory = localStorage.getItem('vbcua_history');
-    if (savedHistory) {
-      try {
-        setHistory(JSON.parse(savedHistory));
-      } catch (e) {
-        console.error('Failed to parse history:', e);
-      }
+    if (token) {
+      fetchConcepts();
     }
-  }, []);
+  }, [token]);
 
   // Update theme class on HTML document
   useEffect(() => {
@@ -69,9 +74,26 @@ export default function App() {
     localStorage.setItem('vbcua_config', JSON.stringify(apiConfig));
   }, [apiConfig]);
 
+  const handleLogout = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('vbcua_token');
+    localStorage.removeItem('vbcua_user');
+    setPage('home');
+  };
+
   const fetchConcepts = async () => {
+    if (!token) return;
     try {
-      const res = await fetch(`${BACKEND_URL}/api/concepts`);
+      const res = await fetch(`${BACKEND_URL}/api/concepts`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         setConcepts(data);
@@ -106,6 +128,7 @@ export default function App() {
 
   // Perform assessment pipeline post request
   const runAssessment = async (audioBlobOrFile, isFile = false) => {
+    if (!token) return;
     setIsAnalyzing(true);
     try {
       const formData = new FormData();
@@ -130,8 +153,16 @@ export default function App() {
 
       const response = await fetch(`${BACKEND_URL}/api/assess`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formData,
       });
+
+      if (response.status === 401) {
+        handleLogout();
+        throw new Error('Session expired. Please sign in again.');
+      }
 
       if (!response.ok) {
         const errData = await response.json();
@@ -140,20 +171,6 @@ export default function App() {
 
       const data = await response.json();
       setResults(data);
-
-      // Create history record
-      const newRecord = {
-        topic: data.topic_name,
-        date: new Date().toLocaleString(),
-        score: data.scorecard.overall_score,
-        grade: data.scorecard.grade,
-        classification: data.scorecard.classification,
-        results: data
-      };
-
-      const updatedHistory = [newRecord, ...history];
-      setHistory(updatedHistory);
-      localStorage.setItem('vbcua_history', JSON.stringify(updatedHistory));
       
       setPage('dashboard'); // Redirect to dashboard view
     } catch (err) {
@@ -166,6 +183,7 @@ export default function App() {
 
   // Perform re-evaluation post request
   const handleReEvaluate = async (newTranscript) => {
+    if (!token) return;
     try {
       const payload = {
         transcript: newTranscript,
@@ -184,9 +202,17 @@ export default function App() {
 
       const response = await fetch(`${BACKEND_URL}/api/re-evaluate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(payload)
       });
+
+      if (response.status === 401) {
+        handleLogout();
+        throw new Error('Session expired. Please sign in again.');
+      }
 
       if (!response.ok) {
         const errData = await response.json();
@@ -209,22 +235,6 @@ export default function App() {
       };
       
       setResults(updatedResults);
-
-      // Update in history records list
-      const updatedHistory = history.map(item => {
-        if (item.results && item.results.pdf_report_url === results.pdf_report_url) {
-          return {
-            ...item,
-            score: data.scorecard.overall_score,
-            grade: data.scorecard.grade,
-            classification: data.scorecard.classification,
-            results: updatedResults
-          };
-        }
-        return item;
-      });
-      setHistory(updatedHistory);
-      localStorage.setItem('vbcua_history', JSON.stringify(updatedHistory));
     } catch (err) {
       alert(`Re-evaluation Error: ${err.message}`);
       console.error(err);
@@ -260,9 +270,29 @@ export default function App() {
     };
   };
 
+  if (!token) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <Navbar page="auth" setPage={() => {}} theme={theme} toggleTheme={toggleTheme} user={null} onLogout={() => {}} />
+        <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <AuthView onLoginSuccess={(newToken, newUser) => {
+            setToken(newToken);
+            setUser(newUser);
+            localStorage.setItem('vbcua_token', newToken);
+            localStorage.setItem('vbcua_user', JSON.stringify(newUser));
+            setPage('home');
+          }} />
+        </main>
+        <footer style={{ borderTop: '1px solid var(--border-card)', padding: '1rem 0', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          <p>&copy; {new Date().getFullYear()} Voice-Based Concept Understanding Analyser. All rights reserved.</p>
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} />
+      <Navbar page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} user={user} onLogout={handleLogout} />
 
       {/* Global Config Settings Bar (Home & Assessment views) */}
       {(page === 'home' || page === 'assessment') && (
@@ -305,11 +335,12 @@ export default function App() {
                     onChange={(e) => handleConfigChange('whisperMode', e.target.value)}
                   >
                     <option value="Local">Local CPU (Whisper Base)</option>
+                    <option value="Gemini">Google Gemini API (Cloud, extremely fast)</option>
                     <option value="OpenAI">OpenAI API Whisper (Cloud)</option>
                   </select>
                 </div>
 
-                {apiConfig.apiProvider === 'Gemini' && (
+                {(apiConfig.apiProvider === 'Gemini' || apiConfig.whisperMode === 'Gemini') && (
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                       <Key size={12} /> Gemini API Key
@@ -371,18 +402,18 @@ export default function App() {
           />
         )}
 
-        {page === 'history' && (
-          <HistoryView
-            history={history}
+        {page === 'profile' && (
+          <ProfileDashboardView
+            user={user}
+            token={token}
             onSelectRecord={handleSelectRecord}
+            onLogout={handleLogout}
           />
         )}
 
         {page === 'faq' && <FaqView />}
 
         {page === 'about' && <AboutView />}
-
-        {page === 'support' && <SupportView />}
       </main>
 
       <footer style={{ borderTop: '1px solid var(--border-card)', padding: '1rem 0', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
