@@ -2,6 +2,19 @@ import os
 import json
 import google.generativeai as genai
 import openai
+from dotenv import load_dotenv
+
+# Try loading from project root or backend folder
+for path in [
+    os.path.join(os.path.dirname(__file__), "..", "..", ".env"),
+    os.path.join(os.path.dirname(__file__), "..", ".env"),
+    os.path.join(os.path.dirname(__file__), ".env")
+]:
+    if os.path.exists(path):
+        load_dotenv(path)
+        break
+else:
+    load_dotenv()
 
 # Default API Keys provided by the user (leave blank for local-only)
 DEFAULT_GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")

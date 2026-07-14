@@ -2,12 +2,25 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+
+# Try loading from project root or backend folder
+for path in [
+    os.path.join(os.path.dirname(__file__), "..", "..", ".env"),
+    os.path.join(os.path.dirname(__file__), "..", ".env"),
+    os.path.join(os.path.dirname(__file__), ".env")
+]:
+    if os.path.exists(path):
+        load_dotenv(path)
+        break
+else:
+    load_dotenv()
 
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER = os.getenv("SMTP_USER", "jagadeeshchittiboyina07@gmail.com")
-SMTP_PASS = os.getenv("SMTP_PASS", "zncqnwlbugtcwmmw")
-EMAIL_FROM = os.getenv("EMAIL_FROM", "VBCUA <jagadeeshchittiboyina07@gmail.com>")
+SMTP_USER = os.getenv("SMTP_USER", "")
+SMTP_PASS = os.getenv("SMTP_PASS", "")
+EMAIL_FROM = os.getenv("EMAIL_FROM", "VBCUA <your_email@gmail.com>")
 
 def send_otp_email(to_email: str, otp: str, purpose: str = "registration") -> bool:
     """

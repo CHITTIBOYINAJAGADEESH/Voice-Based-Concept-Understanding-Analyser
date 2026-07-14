@@ -16,3 +16,5 @@ transformers
 pymongo
 pyjwt
 bcrypt
+python-dotenv
+

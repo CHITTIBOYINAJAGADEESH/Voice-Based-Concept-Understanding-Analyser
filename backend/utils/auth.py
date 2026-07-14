@@ -5,6 +5,19 @@ import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from utils.db import db
+from dotenv import load_dotenv
+
+# Try loading from project root or backend folder
+for path in [
+    os.path.join(os.path.dirname(__file__), "..", "..", ".env"),
+    os.path.join(os.path.dirname(__file__), "..", ".env"),
+    os.path.join(os.path.dirname(__file__), ".env")
+]:
+    if os.path.exists(path):
+        load_dotenv(path)
+        break
+else:
+    load_dotenv()
 
 SECRET_KEY = os.getenv("JWT_SECRET", "vbcua_super_secret_key_1234567890_change_me")
 ALGORITHM = "HS256"

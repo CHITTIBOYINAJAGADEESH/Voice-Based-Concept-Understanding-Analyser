@@ -1,6 +1,19 @@
 import os
 import whisper
 import openai
+from dotenv import load_dotenv
+
+# Try loading from project root or backend folder
+for path in [
+    os.path.join(os.path.dirname(__file__), "..", "..", ".env"),
+    os.path.join(os.path.dirname(__file__), "..", ".env"),
+    os.path.join(os.path.dirname(__file__), ".env")
+]:
+    if os.path.exists(path):
+        load_dotenv(path)
+        break
+else:
+    load_dotenv()
 
 # Default API Key from default credentials (leave blank for local-only)
 DEFAULT_OPENAI_KEY = ""
