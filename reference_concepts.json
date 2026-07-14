@@ -1,0 +1,134 @@
+{
+  "machine_learning": {
+    "name": "Machine Learning",
+    "reference_explanation": "Machine learning is a subset of artificial intelligence focused on building systems that learn from data and improve their performance over time without being explicitly programmed. It primarily involves training algorithms on historical datasets to identify patterns and build mathematical models. These models are then used to make predictions, classifications, or decisions on new, unseen data. Key paradigms include supervised learning, where algorithms learn from labeled data; unsupervised learning, which finds hidden structures in unlabeled data; and reinforcement learning, which trains agents to maximize cumulative rewards through trial and error.",
+    "sub_concepts": [
+      "subset of artificial intelligence",
+      "learning from data and improving over time",
+      "no explicit programming required",
+      "training models on datasets",
+      "making predictions or decisions on unseen data",
+      "supervised learning using labeled data",
+      "unsupervised learning to find hidden structures",
+      "reinforcement learning based on rewards"
+    ],
+    "keywords": ["algorithms", "patterns", "models", "supervised", "unsupervised", "reinforcement", "predictions", "training", "labeled", "features"]
+  },
+  "artificial_intelligence": {
+    "name": "Artificial Intelligence",
+    "reference_explanation": "Artificial Intelligence is the broad branch of computer science dedicated to creating systems capable of performing tasks that typically require human intelligence. These tasks include visual perception, speech recognition, decision-making, language translation, and reasoning. AI is divided into narrow AI, which is designed and trained for a specific task, and general AI, which possesses the cognitive capabilities to understand and learn any intellectual task a human can. Modern AI relies heavily on machine learning, neural networks, and deep learning architectures to process massive datasets and simulate human cognitive functions.",
+    "sub_concepts": [
+      "simulation of human intelligence by machines",
+      "tasks like speech recognition and translation",
+      "narrow AI for specific tasks",
+      "general AI for general cognitive capabilities",
+      "relying on machine learning and deep learning",
+      "decision making and reasoning capabilities"
+    ],
+    "keywords": ["cognitive", "reasoning", "human", "perception", "narrow", "general", "deep learning", "neural networks", "automation"]
+  },
+  "cloud_computing": {
+    "name": "Cloud Computing",
+    "reference_explanation": "Cloud computing is the on-demand delivery of computing services, including servers, storage, databases, networking, software, and analytics, over the internet. Instead of buying and maintaining physical data centers, businesses rent access to these resources from cloud providers like AWS, Azure, or Google Cloud. It operates on a pay-as-you-go pricing model, allowing organizations to lower operating costs, run infrastructure more efficiently, and scale resources dynamically. Major service models include Infrastructure as a Service (IaaS), Platform as a Service (PaaS), and Software as a Service (SaaS).",
+    "sub_concepts": [
+      "on-demand delivery of computing services over internet",
+      "renting servers, storage, and databases",
+      "pay-as-you-go pricing model",
+      "infrastructure scaling and flexibility",
+      "IaaS, PaaS, and SaaS service models",
+      "reducing the need for physical data centers"
+    ],
+    "keywords": ["internet", "servers", "storage", "databases", "scaling", "infrastructure", "IaaS", "PaaS", "SaaS", "pay-as-you-go"]
+  },
+  "data_science": {
+    "name": "Data Science",
+    "reference_explanation": "Data science is an interdisciplinary field that combines scientific methods, processes, algorithms, and systems to extract knowledge and actionable insights from structured and unstructured data. It integrates concepts from statistics, mathematics, computer science, and domain expertise. The data science lifecycle involves data collection, cleaning and preprocessing, exploratory data analysis (EDA), predictive modeling using machine learning, and communicating results through visualizations and reports to drive strategic decision-making.",
+    "sub_concepts": [
+      "interdisciplinary field extracting insights from data",
+      "structured and unstructured data analysis",
+      "combining statistics, mathematics, and computer science",
+      "data lifecycle from collection to cleaning",
+      "exploratory data analysis and predictive modeling",
+      "communicating results to drive business decisions"
+    ],
+    "keywords": ["statistics", "insights", "unstructured", "structured", "cleaning", "exploratory", "lifecycle", "modeling", "math", "decisions"]
+  },
+  "cyber_security": {
+    "name": "Cyber Security",
+    "reference_explanation": "Cyber security is the practice of protecting systems, networks, devices, programs, and data from digital attacks, damage, or unauthorized access. These cyber attacks are often aimed at accessing, changing, or destroying sensitive information, extorting money from users, or interrupting normal business processes. Essential pillars of cybersecurity include network security, application security, cloud security, and information security. Key techniques involve encryption, multi-factor authentication, firewalls, intrusion detection systems, and maintaining robust access control policies based on the principle of least privilege.",
+    "sub_concepts": [
+      "protecting systems and networks from digital attacks",
+      "preventing unauthorized access and data breaches",
+      "securing hardware, software, and data repositories",
+      "encryption and multi-factor authentication",
+      "firewalls and intrusion detection systems",
+      "principles of access control and least privilege"
+    ],
+    "keywords": ["protection", "attacks", "unauthorized", "encryption", "authentication", "firewalls", "intrusion", "vulnerabilities", "malware", "privilege"]
+  },
+  "blockchain": {
+    "name": "Blockchain",
+    "reference_explanation": "A blockchain is a decentralized, distributed, and immutable digital ledger that records transactions across a network of computers. Each transaction is bundled into a block and secured using cryptographic principles. Once a block is added to the chain, the data inside it cannot be altered without changing all subsequent blocks and gaining consensus from the majority of the network. This architecture eliminates the need for central authorities or intermediaries, making it highly secure, transparent, and ideal for applications like cryptocurrencies, smart contracts, and supply chain tracking.",
+    "sub_concepts": [
+      "decentralized and distributed digital ledger",
+      "immutable record keeping across computers",
+      "blocks secured by cryptography",
+      "consensus mechanism among network nodes",
+      "no central authority or intermediary",
+      "smart contracts and cryptographic security"
+    ],
+    "keywords": ["ledger", "decentralized", "immutable", "cryptography", "consensus", "blocks", "nodes", "transparency", "transactions"]
+  },
+  "computer_networks": {
+    "name": "Computer Networks",
+    "reference_explanation": "A computer network is a system of interconnected computing devices that can communicate with each other and share resources, files, and data. Networks are categorized by geographical scale, such as Local Area Networks (LAN) and Wide Area Networks (WAN). They rely on standard protocols like TCP/IP to ensure reliable packet delivery, addressing (IP addresses), and routing. Networking hardware includes routers, switches, access points, and network interface cards, which together establish the physical and logical links necessary for data transmission.",
+    "sub_concepts": [
+      "interconnected computing devices sharing resources",
+      "geographical classifications like LAN and WAN",
+      "standard protocols like TCP/IP",
+      "packet delivery, IP addressing, and routing",
+      "hardware components like routers and switches",
+      "wired and wireless transmission media"
+    ],
+    "keywords": ["interconnected", "LAN", "WAN", "protocols", "TCP", "IP", "routing", "routers", "switches", "packets"]
+  },
+  "operating_systems": {
+    "name": "Operating Systems",
+    "reference_explanation": "An operating system (OS) is the primary system software that manages a computer's hardware resources and provides common services for computer programs. It acts as an intermediary between applications and the physical hardware. The core component of an OS is the kernel, which handles critical tasks such as process management and scheduling, memory management, file system organization, device I/O communication, and security access controls, ensuring that multiple applications run smoothly without resource conflicts.",
+    "sub_concepts": [
+      "primary system software managing hardware",
+      "intermediary between user programs and physical hardware",
+      "kernel as the core component of the OS",
+      "process execution and CPU scheduling",
+      "memory management and virtualization",
+      "file system management and device I/O"
+    ],
+    "keywords": ["software", "hardware", "kernel", "process", "memory", "scheduling", "file system", "drivers", "resources", "intermediary"]
+  },
+  "dbms": {
+    "name": "Database Management Systems",
+    "reference_explanation": "A Database Management System (DBMS) is software designed to define, manipulate, retrieve, and manage data in a database. It serves as an interface between the database and its end-users or programs, ensuring that data is organized, easily accessible, and consistently formatted. A DBMS provides crucial features including data integrity, access control, backup and recovery, and concurrency control. Common models include Relational DBMS (RDBMS) which structures data in tables using SQL, and NoSQL systems designed for unstructured, high-volume data.",
+    "sub_concepts": [
+      "software for managing and manipulating databases",
+      "interface between applications and data files",
+      "data integrity, security, and access controls",
+      "backup, recovery, and concurrency management",
+      "Relational DBMS using structured tables and SQL",
+      "NoSQL databases for unstructured data scaling"
+    ],
+    "keywords": ["retrieval", "integrity", "SQL", "relational", "concurrency", "tables", "NoSQL", "query", "schema", "indexing"]
+  },
+  "internet_of_things": {
+    "name": "Internet of Things",
+    "reference_explanation": "The Internet of Things (IoT) refers to a collective network of connected physical devices, vehicles, home appliances, and other items embedded with electronics, software, sensors, actuators, and network connectivity. This integration enables these objects to collect, transmit, and exchange data over the internet. IoT systems allow for direct integration of the physical world into computer-based systems, leading to improvements in efficiency, accuracy, and economic benefit. They require key layers including the physical sensing layer, network communication layer, and cloud application/data analytics layer.",
+    "sub_concepts": [
+      "network of physical objects embedded with sensors",
+      "collecting and exchanging data over the internet",
+      "direct integration of physical world and computing systems",
+      "sensing layer with transducers and microcontrollers",
+      "network layer for wireless data transmission",
+      "cloud applications performing analytics on sensor data"
+    ],
+    "keywords": ["sensors", "connectivity", "actuators", "embedded", "smart", "automation", "data", "wireless", "telemetry", "analytics"]
+  }
+}
