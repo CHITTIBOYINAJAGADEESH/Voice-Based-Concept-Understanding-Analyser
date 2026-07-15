@@ -181,7 +181,7 @@ export default function HomeView({
           </div>
 
           {/* Right cheat-sheet / guideline view */}
-          <div style={{ borderLeft: '1px solid var(--border-card)', paddingLeft: '1.25rem' }}>
+          <div className="concept-specifications-container">
             <h3 style={{ fontSize: '1.0rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '700' }}>
               <Layers size={16} style={{ color: 'var(--primary)' }} />
               Concept Specifications

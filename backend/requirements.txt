@@ -1,3 +1,4 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 streamlit
 librosa
 reportlab
@@ -17,4 +18,8 @@ pymongo
 pyjwt
 bcrypt
 python-dotenv
-
+fastapi
+uvicorn
+gunicorn
+python-multipart
+dnspython

@@ -9,7 +9,7 @@ import AboutView from './components/AboutView';
 import { Settings, Key, Sliders, ChevronDown, ChevronUp } from 'lucide-react';
 import './App.css';
 
-const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:8000' : '';
+const BACKEND_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:8000' : '');
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem('vbcua_token') || null);

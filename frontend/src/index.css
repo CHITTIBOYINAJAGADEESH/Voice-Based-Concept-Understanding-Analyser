@@ -97,6 +97,22 @@ h1, h2, h3, h4, h5, h6 {
   padding: 1.0rem 1.5rem;
 }
 
+.hide-on-desktop {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.0rem 1.0rem;
+  }
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .hide-on-desktop {
+    display: block !important;
+  }
+}
+
 /* Glassmorphism card styles */
 .glass-card {
   background: var(--bg-card);

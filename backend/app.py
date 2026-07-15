@@ -35,11 +35,24 @@ from utils.pdf_generator import build_assessment_pdf
 
 app = FastAPI(title="Voice-Based Concept Understanding Analyser (VBCUA) API")
 
-# Configure CORS for frontend access (Vite development server)
+# Configure CORS for frontend access
+cors_origins = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"]
+env_origins = os.getenv("ALLOWED_ORIGINS")
+if env_origins:
+    parsed_origins = [origin.strip() for origin in env_origins.split(",") if origin.strip()]
+    if "*" in parsed_origins:
+        cors_origins = ["*"]
+    else:
+        cors_origins.extend(parsed_origins)
+
+# If wildcard '*' is in allowed origins, we must set allow_credentials to False to prevent Starlette from crashing.
+# Since the frontend uses custom Authorization headers for tokens and not cookies, this is safe and functional.
+allow_all = "*" in cors_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "*"],
-    allow_credentials=True,
+    allow_origins=cors_origins,
+    allow_credentials=not allow_all,
     allow_methods=["*"],
     allow_headers=["*"],
 )

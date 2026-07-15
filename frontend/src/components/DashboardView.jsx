@@ -7,7 +7,7 @@ import {
 import { getTopicIcon } from '../utils';
 import VoiceRecorder from './VoiceRecorder';
 
-const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:8000' : '';
+const BACKEND_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:8000' : '');
 
 export default function DashboardView({ 
   topic, 
@@ -119,7 +119,7 @@ export default function DashboardView({
           </button>
           <div>
             <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>Oral Assessment Workspace</span>
-            <h2 style={{ fontSize: '1.3rem', marginTop: '0.05rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h2 style={{ fontSize: '1.3rem', marginTop: '0.05rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
               <span>{getTopicIcon(topic.id, topic.name)}</span>
               <span>Concept Topic:</span>
               <span style={{ color: 'var(--accent)' }}>{topic.name}</span>
@@ -252,7 +252,7 @@ export default function DashboardView({
           </button>
           <div>
             <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>Speech Analysis Results</span>
-            <h2 style={{ fontSize: '1.25rem', marginTop: '0.05rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h2 style={{ fontSize: '1.25rem', marginTop: '0.05rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
               <span>{getTopicIcon(results.topic_id, results.topic_name)}</span>
               <span>Dashboard:</span>
               <span style={{ color: 'var(--accent)' }}>{results.topic_name}</span>

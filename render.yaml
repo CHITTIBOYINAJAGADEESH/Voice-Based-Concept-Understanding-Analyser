@@ -1,0 +1,26 @@
+# Render.com Blueprint Specification
+# Use this to deploy the unified Web Service (FastAPI backend hosting the built React frontend)
+services:
+  - type: web
+    name: vbcua-analyser
+    env: python
+    # Specify Python 3.10+ since PyTorch / Whisper requires modern python version
+    pythonVersion: 3.10.12
+    # Build Command: Builds React assets and installs python backend requirements
+    buildCommand: "cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt"
+    # Start Command: Launches FastAPI backend from the backend folder
+    startCommand: "cd backend && uvicorn app:app --host 0.0.0.0 --port $PORT"
+    # Service settings
+    plan: free
+    envVars:
+      - key: MONGO_URI
+        sync: false
+        description: "MongoDB Connection URI (e.g. mongodb+srv://username:password@cluster.mongodb.net/database)"
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: GEMINI_API_KEY
+        sync: false
+        description: "Optional Google Gemini API Key"
+      - key: OPENAI_API_KEY
+        sync: false
+        description: "Optional OpenAI API Key"

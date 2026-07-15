@@ -101,3 +101,51 @@ Once built, the production assets are automatically served from the FastAPI back
 Expand the **AI Models & Keys Configuration** panel at the top of the workspace:
 - **Local Simulated Mode**: Leave the API keys blank and set the provider to "Local". The system runs offline using local CPU models without external API calls.
 - **Cloud Enhanced Mode**: Select **Gemini** or **OpenAI** and input your API key to generate premium technical speaking coaching reviews.
+
+---
+
+## 🌐 Deployment on Render.com
+
+You can deploy this project on Render.com using one of the following methods:
+
+### Method 1: Unified Service (Monolith) — Recommended
+In this method, a single Render Web Service hosts both the frontend and backend. FastAPI serves the built React static files, avoiding all CORS issues and saving free limits.
+
+1. **Create a MongoDB Atlas Database**:
+   - Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and set up a free-tier cluster.
+   - Get the connection string (it will start with `mongodb+srv://...`).
+2. **Deploy via Render Blueprint**:
+   - Commit and push your changes to GitHub.
+   - Go to the Render Dashboard -> **Blueprints** -> **New Blueprint Instance**.
+   - Connect your repository. It will automatically detect `render.yaml` and configure the service.
+   - Set the required `MONGO_URI` environment variable in the dashboard.
+   - Click **Deploy**.
+
+Alternatively, you can manually set it up as a **Web Service**:
+- **Environment**: `Python`
+- **Build Command**: `cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt`
+- **Start Command**: `cd backend && uvicorn app:app --host 0.0.0.0 --port $PORT`
+- **Environment Variables**:
+  - `MONGO_URI`: Your MongoDB Atlas connection string.
+  - `ALLOWED_ORIGINS`: `*`
+
+---
+
+### Method 2: Separated Services (Frontend + Backend)
+If you prefer to deploy them as separate services:
+
+#### 1. Backend Web Service
+- **Root Directory**: `backend`
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
+- **Environment Variables**:
+  - `MONGO_URI`: Your MongoDB Atlas connection string.
+  - `ALLOWED_ORIGINS`: `https://your-frontend-domain.onrender.com`
+
+#### 2. Frontend Static Site
+- **Root Directory**: `frontend`
+- **Build Command**: `npm install && npm run build`
+- **Publish Directory**: `dist`
+- **Environment Variables**:
+  - `VITE_API_URL`: The URL of your deployed Backend Web Service (e.g. `https://vbcua-backend.onrender.com`).
+
