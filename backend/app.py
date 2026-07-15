@@ -400,8 +400,11 @@ async def assess_speech(
             # 5. Acoustic Evaluation
             audio_results = analyze_speech_signals(y_proc, sr_proc, transcript=transcript)
 
-            # 6. SBERT Concept Similarity
-            semantic_results = analyze_concept_understanding(transcript, ref_data)
+            # Determine API Key for coach and semantic evaluation
+            coach_api_key = gemini_api_key if api_provider == "Gemini" else openai_api_key
+
+            # 6. SBERT / API Concept Similarity
+            semantic_results = analyze_concept_understanding(transcript, ref_data, api_key=coach_api_key, provider=api_provider)
             semantic_results["transcript"] = transcript
 
             # 7. NLP & Lexical statistics
@@ -411,7 +414,6 @@ async def assess_speech(
             scorecard = compile_scorecard(semantic_results, audio_results, nlp_results)
 
             # 9. AI Feedback Coach
-            coach_api_key = gemini_api_key if api_provider == "Gemini" else openai_api_key
             ai_feedback = generate_ai_coaching_feedback(
                 topic_name, transcript, scorecard, semantic_results, audio_results, nlp_results,
                 provider=api_provider, api_key=coach_api_key

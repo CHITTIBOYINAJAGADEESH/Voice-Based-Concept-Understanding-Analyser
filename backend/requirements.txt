@@ -1,19 +1,13 @@
---extra-index-url https://download.pytorch.org/whl/cpu
-streamlit
 librosa
 reportlab
 pydub
 matplotlib
 soundfile
-openai-whisper
 google-generativeai
 openai
 nltk
-sentence-transformers
 numpy
 pandas
-torch
-transformers
 pymongo
 pyjwt
 bcrypt

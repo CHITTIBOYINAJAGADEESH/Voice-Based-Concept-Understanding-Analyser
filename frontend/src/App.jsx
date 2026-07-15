@@ -45,7 +45,7 @@ export default function App() {
       apiProvider: 'Gemini',
       geminiApiKey: '',
       openaiApiKey: '',
-      whisperMode: 'Local'
+      whisperMode: 'Gemini'
     };
   });
 

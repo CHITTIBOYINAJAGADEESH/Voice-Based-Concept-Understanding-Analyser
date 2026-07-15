@@ -1,7 +1,11 @@
 import os
-import whisper
 import openai
 from dotenv import load_dotenv
+
+try:
+    import whisper
+except ImportError:
+    whisper = None
 
 # Try loading from project root or backend folder
 for path in [
@@ -28,6 +32,8 @@ def get_local_whisper_model(model_size="tiny"):
     'tiny' is extremely fast and light on local CPUs.
     """
     global _WHISPER_MODEL
+    if whisper is None:
+        raise RuntimeError("Local Whisper is not available on this server environment. Please configure Google Gemini API (Cloud) or OpenAI API Whisper (Cloud) in Settings.")
     if _WHISPER_MODEL is None:
         # Load whisper model (will download to ~/.cache/whisper if not present)
         _WHISPER_MODEL = whisper.load_model(model_size)
