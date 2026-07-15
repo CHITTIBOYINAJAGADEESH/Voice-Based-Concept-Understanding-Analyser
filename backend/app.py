@@ -679,6 +679,54 @@ def create_faq(payload: FAQCreate, current_user: dict = Depends(get_current_user
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Unhandled exception handler to return clean JSON errors and prevent React JSON parser crashes
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    print(f"Unhandled error: {exc}")
+    traceback.print_exception(type(exc), exc, exc.__traceback__)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "detail": "Internal Server Error",
+            "error": str(exc)
+        }
+    )
+
+@app.get("/api/health")
+def health_check():
+    mongo_status = "Unknown"
+    mongo_error = None
+    
+    uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
+    censored_uri = uri
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(uri)
+        if parsed.password:
+            censored_uri = uri.replace(parsed.password, "******")
+    except Exception:
+        pass
+
+    try:
+        from utils.db import client
+        # Force a quick query to test connection
+        client.admin.command('ping')
+        mongo_status = "Connected"
+    except Exception as e:
+        mongo_status = "Error"
+        mongo_error = str(e)
+        
+    return {
+        "status": "online",
+        "mongodb": {
+            "status": mongo_status,
+            "uri": censored_uri,
+            "error": mongo_error
+        }
+    }
+
+
 # Mount React static files build if it exists
 frontend_dist_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
 if os.path.exists(frontend_dist_path):
