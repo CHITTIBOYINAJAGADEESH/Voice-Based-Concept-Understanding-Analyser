@@ -5,7 +5,6 @@ services:
     name: vbcua-analyser
     env: python
     # Specify Python 3.10+ since PyTorch / Whisper requires modern python version
-    pythonVersion: 3.10.12
     # Build Command: Builds React assets and installs python backend requirements
     buildCommand: "cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt"
     # Start Command: Launches FastAPI backend from the backend folder
@@ -13,6 +12,8 @@ services:
     # Service settings
     plan: free
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.10.12"
       - key: MONGO_URI
         sync: false
         description: "MongoDB Connection URI (e.g. mongodb+srv://username:password@cluster.mongodb.net/database)"
