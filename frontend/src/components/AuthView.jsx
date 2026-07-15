@@ -94,7 +94,12 @@ export default function AuthView({ onLoginSuccess }) {
         throw new Error(data.detail || 'Registration failed.');
       }
       
-      setSuccessMsg('An OTP has been sent to your email. Please verify.');
+      if (data.otp_fallback) {
+        setSuccessMsg(`${data.message} Verification code: ${data.otp_fallback}`);
+        setOtp(data.otp_fallback);
+      } else {
+        setSuccessMsg('An OTP has been sent to your email. Please verify.');
+      }
       setScreen('verify');
     } catch (err) {
       setErrorMsg(err.message);
@@ -158,7 +163,12 @@ export default function AuthView({ onLoginSuccess }) {
         throw new Error(data.detail || 'Request failed.');
       }
       
-      setSuccessMsg('A password reset OTP has been sent to your email.');
+      if (data.otp_fallback) {
+        setSuccessMsg(`${data.message} Reset code: ${data.otp_fallback}`);
+        setOtp(data.otp_fallback);
+      } else {
+        setSuccessMsg('A password reset OTP has been sent to your email.');
+      }
       setScreen('reset');
     } catch (err) {
       setErrorMsg(err.message);

@@ -89,7 +89,8 @@ def send_otp_email(to_email: str, otp: str, purpose: str = "registration") -> bo
     msg.attach(MIMEText(body, 'html'))
     
     try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+        # Set a 5-second timeout to fail-fast if SMTP is unreachable or blocked
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=5) as server:
             server.starttls()
             server.login(SMTP_USER, SMTP_PASS)
             server.send_message(msg)
