@@ -1,6 +1,7 @@
 import os
 import pymongo
 import gridfs
+import certifi
 from typing import Union
 from dotenv import load_dotenv
 
@@ -17,7 +18,16 @@ else:
     load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
-client = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+
+# Use certifi for TLS CA certificates verification if connecting via Atlas or with TLS/SSL options
+client_kwargs = {"serverSelectionTimeoutMS": 5000}
+if "mongodb+srv://" in MONGO_URI or "ssl=true" in MONGO_URI.lower() or "tls=true" in MONGO_URI.lower():
+    try:
+        client_kwargs["tlsCAFile"] = certifi.where()
+    except Exception as e:
+        print(f"Warning: Could not configure certifi tlsCAFile: {e}")
+
+client = pymongo.MongoClient(MONGO_URI, **client_kwargs)
 db = client["VBCUA"]
 fs = gridfs.GridFS(db)
 

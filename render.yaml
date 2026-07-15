@@ -19,6 +19,22 @@ services:
         description: "MongoDB Connection URI (e.g. mongodb+srv://username:password@cluster.mongodb.net/database)"
       - key: ALLOWED_ORIGINS
         value: "*"
+      - key: JWT_SECRET
+        sync: false
+        description: "Secret key for signing JWT auth tokens"
+      - key: SMTP_HOST
+        value: "smtp.gmail.com"
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+        description: "Email address for SMTP OTP mail delivery"
+      - key: SMTP_PASS
+        sync: false
+        description: "App Password for SMTP mail delivery"
+      - key: EMAIL_FROM
+        sync: false
+        description: "Sender name and email (e.g. VBCUA <your_email@gmail.com>)"
       - key: GEMINI_API_KEY
         sync: false
         description: "Optional Google Gemini API Key"
